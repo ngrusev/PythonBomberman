@@ -7,34 +7,39 @@ pygame.init()
 FPS = 60
 fpsClock = pygame.time.Clock()
 
-DISPLAYSURF = pygame.display.set_mode((400, 300))
+DISPLAYSURF = pygame.display.set_mode((450, 350))
 pygame.display.set_caption('Bomberman')
 
-player = Player.Player(50, 50, 50, 50)
-level = BaseLevel.BaseLevel(400, 300, player)
-direction = None
+player = Player.Player(0, 0)
+level = BaseLevel.BaseLevel(450, 350, player)
+direction_mask = 0
+
+direction_map = { K_LEFT : 1, K_UP : 2, K_RIGHT : 4, K_DOWN : 8 }
 
 while True:
     DISPLAYSURF.fill((255, 255, 255))
-    DISPLAYSURF.blit(player.get_sprite(), player.get_position())
     
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN:
-            direction = event.key
-        elif event.type == KEYUP and event.key == direction:
-            direction = None
-
-    if direction == K_LEFT:
+        elif event.type == KEYDOWN and event.key in direction_map:
+            direction_mask |= direction_map[event.key]
+        elif event.type == KEYUP and event.key in direction_map:
+            direction_mask &= ~direction_map[event.key]
+            
+    if direction_mask & direction_map[K_LEFT] != 0:
         player.move_left()
-    elif direction == K_RIGHT:
+    if direction_mask & direction_map[K_RIGHT] != 0:
         player.move_right()
-    elif direction == K_UP:
+    if direction_mask & direction_map[K_UP] != 0:
         player.move_up()
-    elif direction == K_DOWN:
+    if direction_mask & direction_map[K_DOWN] != 0:
         player.move_down()
+
+    for elem in level.elements:
+        DISPLAYSURF.blit(elem.get_sprite(), elem.get_position())
+    
     
     pygame.display.update()
     fpsClock.tick(FPS)

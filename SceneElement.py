@@ -10,3 +10,6 @@ class SceneElement:
 
     def get_position(self):
         return (self.x, self.y)
+
+    def is_solid(self):
+        raise NotImplementedError()
