@@ -5,7 +5,7 @@ PLAYER_WIDTH = 45
 PLAYER_HEIGHT = 45
 PLAYER_SPEED = 5
 PLAYER_BLAST_RADIUS = 2
-PLAYER_MAX_BOMBS = 2
+PLAYER_BOMBS = 1
 
 def modDecrease(value):
     if value > 0:
@@ -22,7 +22,7 @@ class Player(LevelElement.LevelElement):
         self.current_level = None
         self.speed = PLAYER_SPEED
         self.blast_radius = PLAYER_BLAST_RADIUS
-        self.bombs = PLAYER_MAX_BOMBS
+        self.bombs = PLAYER_BOMBS
         
     def get_sprite(self):
         return self.sprite

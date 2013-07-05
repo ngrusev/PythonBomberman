@@ -66,12 +66,16 @@ class BaseLevel:
                 if x < 2 and y < 2 or (x, y) in self.occupied_cells:
                     continue
                 if random.random() <= DEMON_SPAWN_CHANCE:
-                    self.elements.append(Demon.Demon(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT))
+                    self.elements.append(Demon.Demon(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT, self))
                     self.occupied_cells.add((x, y))
                 
     def has_elements_on_top(self, element):
-        pos = element.get_position()
-        return not self.is_element_position_valid(element, pos[0], pos[1], False)
+        for elem in self.elements:
+            if elem == element:
+                continue
+            if intersecting(element, elem):
+                return True
+        return False
 
     def update(self):
         i = 0
