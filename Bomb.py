@@ -19,7 +19,7 @@ class Bomb(LevelElement.LevelElement):
         return frame
 
     def is_solid(self):
-        return self.__armed
+        return self.__armed and self.alive
 
     def update(self):
         if not self.__armed:
@@ -34,7 +34,10 @@ class Bomb(LevelElement.LevelElement):
             self.ticks = 0
         if self.stage == 4:
             self.alive = False
-            self.level.explode_bomb(self)
+            self.__explode()
+
+    def __explode(self):
+        self.level.explode_bomb(self)
         
             
         

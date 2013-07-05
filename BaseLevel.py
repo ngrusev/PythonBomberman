@@ -3,6 +3,7 @@ import BrickWall
 import SteelWall
 import Bomb
 import random
+import Flame
 
 BRICK_WALLS_CHANCE = 0.5
 
@@ -54,9 +55,6 @@ class BaseLevel:
         pos = element.get_position()
         return not self.is_element_position_valid(element, pos[0], pos[1], False)
 
-    def explode_bomb(self, bomb):
-        return
-
     def update(self):
         i = 0
         while i < len(self.elements):
@@ -70,3 +68,39 @@ class BaseLevel:
         col = (self.player.x + self.player.width // 2 + self.player.width % 2) // LevelElement.DEFAULT_WIDTH
         row = (self.player.y + self.player.height // 2 + self.player.height % 2) // LevelElement.DEFAULT_HEIGHT
         self.elements.append(Bomb.Bomb(self, col * LevelElement.DEFAULT_WIDTH, row * LevelElement.DEFAULT_HEIGHT))
+
+    def explode_bomb(self, bomb):
+        self.elements.append(Flame.Flame(bomb.x, bomb.y))
+        closest = [self.player.blast_radius + 1] * 4
+        closest_elem = [None] * 4
+        directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
+        bombPosition = bomb.get_position()
+        elementSizePair = (LevelElement.DEFAULT_WIDTH, LevelElement.DEFAULT_HEIGHT)
+        for elem in self.elements:
+            if not elem.is_solid():
+                continue
+            offset = 0
+            if elem.x == bomb.x:
+                offset = 1
+            elif elem.y != bomb.y:
+                continue
+            elemPosition = elem.get_position()
+            diff = (elemPosition[offset] - bombPosition[offset]) // elementSizePair[offset]
+            if diff < 0:
+                diff = -diff
+            else:
+                offset += 2
+            if closest[offset] > diff:
+                closest[offset] = diff
+                closest_elem[offset] = elem
+
+        for i in range(0, 4):
+            if closest_elem[i] != None:
+                closest_elem[i].destroy()
+            for j in range(1, closest[i]):
+                newX = bombPosition[0] + j * directions[i][0] * LevelElement.DEFAULT_WIDTH
+                newY = bombPosition[1] + j * directions[i][1] * LevelElement.DEFAULT_HEIGHT
+                if (newX >= 0 and newX < self.width and
+                    newY >= 0 and newY < self.height):
+                    self.elements.append(Flame.Flame(newX, newY))
+

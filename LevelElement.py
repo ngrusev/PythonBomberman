@@ -1,5 +1,7 @@
 DEFAULT_WIDTH = 50
 DEFAULT_HEIGHT = 50
+FADE_THRESHOLD = 50
+FADE_SPEED = 3
 
 class LevelElement:
     def __init__(self, x, y, width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT):
@@ -19,4 +21,10 @@ class LevelElement:
         raise NotImplementedError()
 
     def update(self):
+        pass
+
+    def interact(self, element):
+        pass
+
+    def destroy(self):
         pass
