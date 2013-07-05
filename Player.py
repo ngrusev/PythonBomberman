@@ -3,7 +3,7 @@ import pygame
 
 PLAYER_WIDTH = 45
 PLAYER_HEIGHT = 45
-PLAYER_SPEED = 3
+PLAYER_SPEED = 5
 
 def decrese(value):
     if value > 0:

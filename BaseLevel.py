@@ -1,4 +1,9 @@
+import BaseWall
+import BrickWall
 import SteelWall
+import random
+
+BRICK_WALLS_CHANCE = 0.5
 
 class BaseLevel:
     def __init__(self, width, height, player):
@@ -8,6 +13,7 @@ class BaseLevel:
         self.width = width
         self.elements = [player]
         self.generate_steel_walls()
+        self.generate_brick_walls()
         
     def is_element_position_valid(self, element, x, y):
         return (self.is_position_valid(element, x, y) and
@@ -30,7 +36,14 @@ class BaseLevel:
         return True
     
     def generate_steel_walls(self):
-        for x in range(0, self.width // (2 * SteelWall.WIDTH)):
-            for y in range(0, self.height // (2 * SteelWall.HEIGHT)):
-                self.elements.append(SteelWall.SteelWall((x * 2 + 1) * SteelWall.WIDTH, (y * 2 + 1) * SteelWall.HEIGHT))
+        for x in range(0, self.width // (2 * BaseWall.WIDTH)):
+            for y in range(0, self.height // (2 * BaseWall.HEIGHT)):
+                self.elements.append(SteelWall.SteelWall((x * 2 + 1) * BaseWall.WIDTH, (y * 2 + 1) * BaseWall.HEIGHT))
                 
+    def generate_brick_walls(self):
+        for x in range(0, self.width // BaseWall.WIDTH):
+            for y in range(0, self.height // BaseWall.HEIGHT, 1 + x % 2):
+                if(x < 2 and y < 2):
+                    continue
+                if(random.random() <= BRICK_WALLS_CHANCE):
+                    self.elements.append(BrickWall.BrickWall(x * BaseWall.WIDTH, y * BaseWall.HEIGHT))
