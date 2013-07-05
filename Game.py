@@ -10,7 +10,7 @@ fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode((850, 650))
 pygame.display.set_caption('Bomberman')
 
-player = Player.Player(0, 0)
+player = Player.Player()
 level = BaseLevel.BaseLevel(850, 650, player)
 direction_mask = 0
 
@@ -41,6 +41,10 @@ while True:
 
     level.update()
 
+    if not player.alive:
+        player = Player.Player()
+        level = BaseLevel.BaseLevel(850, 650, player)
+    
     for elem in level.elements:
         DISPLAYSURF.blit(elem.get_sprite(), elem.get_position())
 

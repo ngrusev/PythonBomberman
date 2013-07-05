@@ -4,18 +4,26 @@ import SteelWall
 import Bomb
 import random
 import Flame
+import Demon
+from Utilities import *
 
 BRICK_WALLS_CHANCE = 0.5
+DEMON_SPAWN_CHANCE = 0.1
 
 class BaseLevel:
     def __init__(self, width, height, player):
         self.player = player
         player.current_level = self
+        player.x = 0
+        player.y = 0
         self.height = height
         self.width = width
+        self.bomb_count = 0
         self.elements = [player]
+        self.occupied_cells = set()
         self.generate_steel_walls()
         self.generate_brick_walls()
+        self.spawn_demons()
         
     def is_element_position_valid(self, element, x, y, solid_only = True):
         return (self.is_position_valid(element, x, y, solid_only) and
@@ -46,11 +54,21 @@ class BaseLevel:
     def generate_brick_walls(self):
         for x in range(0, self.width // LevelElement.DEFAULT_WIDTH):
             for y in range(0, self.height // LevelElement.DEFAULT_HEIGHT, 1 + x % 2):
-                if(x < 2 and y < 2):
+                if x < 2 and y < 2:
                     continue
-                if(random.random() <= BRICK_WALLS_CHANCE):
+                if random.random() <= BRICK_WALLS_CHANCE:
                     self.elements.append(BrickWall.BrickWall(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT))
-                    
+                    self.occupied_cells.add((x, y))
+
+    def spawn_demons(self):
+        for x in range(0, self.width // LevelElement.DEFAULT_WIDTH):
+            for y in range(0, self.height // LevelElement.DEFAULT_HEIGHT, 1 + x % 2):
+                if x < 2 and y < 2 or (x, y) in self.occupied_cells:
+                    continue
+                if random.random() <= DEMON_SPAWN_CHANCE:
+                    self.elements.append(Demon.Demon(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT))
+                    self.occupied_cells.add((x, y))
+                
     def has_elements_on_top(self, element):
         pos = element.get_position()
         return not self.is_element_position_valid(element, pos[0], pos[1], False)
@@ -64,12 +82,37 @@ class BaseLevel:
             else:
                 i += 1
 
+        for first in self.elements:
+            for second in self.elements:
+                if not first.is_solid() and not second.is_solid() and intersecting(first, second):
+                    first.interact(second)
+
+        i = 0
+        while i < len(self.elements):
+            if not self.elements[i].alive:
+                self.elements.pop(i)
+            else:
+                i += 1
+
     def add_bomb(self):
+        if self.bomb_count == self.player.bombs:
+            return
+
         col = (self.player.x + self.player.width // 2 + self.player.width % 2) // LevelElement.DEFAULT_WIDTH
         row = (self.player.y + self.player.height // 2 + self.player.height % 2) // LevelElement.DEFAULT_HEIGHT
-        self.elements.append(Bomb.Bomb(self, col * LevelElement.DEFAULT_WIDTH, row * LevelElement.DEFAULT_HEIGHT))
+        newX = col * LevelElement.DEFAULT_WIDTH
+        newY = row * LevelElement.DEFAULT_HEIGHT
+
+        for elem in self.elements:
+            if (isinstance(elem, Bomb.Bomb) and
+                elem.x == newX and elem.y == newY):
+                return
+        
+        self.bomb_count += 1
+        self.elements.append(Bomb.Bomb(self, newX, newY))
 
     def explode_bomb(self, bomb):
+        self.bomb_count -= 1
         self.elements.append(Flame.Flame(bomb.x, bomb.y))
         closest = [self.player.blast_radius + 1] * 4
         closest_elem = [None] * 4

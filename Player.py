@@ -5,6 +5,7 @@ PLAYER_WIDTH = 45
 PLAYER_HEIGHT = 45
 PLAYER_SPEED = 5
 PLAYER_BLAST_RADIUS = 2
+PLAYER_MAX_BOMBS = 2
 
 def modDecrease(value):
     if value > 0:
@@ -15,12 +16,13 @@ def modDecrease(value):
 
 class Player(LevelElement.LevelElement):
     
-    def __init__(self, x, y):
-        super().__init__(x, y, PLAYER_WIDTH, PLAYER_HEIGHT)
+    def __init__(self):
+        super().__init__(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.sprite = pygame.image.load('player.png')
         self.current_level = None
         self.speed = PLAYER_SPEED
         self.blast_radius = PLAYER_BLAST_RADIUS
+        self.bombs = PLAYER_MAX_BOMBS
         
     def get_sprite(self):
         return self.sprite
@@ -50,3 +52,6 @@ class Player(LevelElement.LevelElement):
 
     def is_solid(self):
         return False
+
+    def destroy(self):
+        self.alive = False

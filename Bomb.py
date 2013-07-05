@@ -33,11 +33,13 @@ class Bomb(LevelElement.LevelElement):
             self.stage += 1
             self.ticks = 0
         if self.stage == 4:
-            self.alive = False
             self.__explode()
 
     def __explode(self):
-        self.level.explode_bomb(self)
+        if self.alive:
+            self.alive = False
+            self.level.explode_bomb(self)
         
-            
+    def destroy(self):
+        self.__explode()
         
