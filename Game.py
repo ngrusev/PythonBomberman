@@ -27,6 +27,8 @@ while True:
             direction_mask |= direction_map[event.key]
         elif event.type == KEYUP and event.key in direction_map:
             direction_mask &= ~direction_map[event.key]
+        elif event.type == KEYDOWN and event.key == K_SPACE:
+            player.drop_bomb()
             
     if direction_mask & direction_map[K_LEFT] != 0:
         player.move_left()
@@ -37,9 +39,12 @@ while True:
     if direction_mask & direction_map[K_DOWN] != 0:
         player.move_down()
 
+    level.update()
+
     for elem in level.elements:
         DISPLAYSURF.blit(elem.get_sprite(), elem.get_position())
-    
+
+    pygame.display.flip()
     
     pygame.display.update()
     fpsClock.tick(FPS)

@@ -19,6 +19,7 @@ class Player(LevelElement.LevelElement):
         self.sprite = pygame.image.load('player.png')
         self.current_level = None
         self.speed = PLAYER_SPEED
+        self.bomb_radius = 2
         
     def get_sprite(self):
         return self.sprite
@@ -45,3 +46,6 @@ class Player(LevelElement.LevelElement):
 
     def is_solid(self):
         return False
+
+    def drop_bomb(self):
+        self.current_level.add_bomb()

@@ -7,6 +7,7 @@ class LevelElement:
         self.y = y
         self.width = width
         self.height = height
+        self.alive = True
 
     def get_sprite(self):
         raise NotImplementedError()
@@ -16,3 +17,6 @@ class LevelElement:
 
     def is_solid(self):
         raise NotImplementedError()
+
+    def update(self):
+        pass
