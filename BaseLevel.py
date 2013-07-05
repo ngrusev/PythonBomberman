@@ -1,4 +1,4 @@
-import BaseWall
+import LevelElement
 import BrickWall
 import SteelWall
 import random
@@ -36,14 +36,14 @@ class BaseLevel:
         return True
     
     def generate_steel_walls(self):
-        for x in range(0, self.width // (2 * BaseWall.WIDTH)):
-            for y in range(0, self.height // (2 * BaseWall.HEIGHT)):
-                self.elements.append(SteelWall.SteelWall((x * 2 + 1) * BaseWall.WIDTH, (y * 2 + 1) * BaseWall.HEIGHT))
+        for x in range(0, self.width // (2 * LevelElement.DEFAULT_WIDTH)):
+            for y in range(0, self.height // (2 * LevelElement.DEFAULT_HEIGHT)):
+                self.elements.append(SteelWall.SteelWall((x * 2 + 1) * LevelElement.DEFAULT_WIDTH, (y * 2 + 1) * LevelElement.DEFAULT_HEIGHT))
                 
     def generate_brick_walls(self):
-        for x in range(0, self.width // BaseWall.WIDTH):
-            for y in range(0, self.height // BaseWall.HEIGHT, 1 + x % 2):
+        for x in range(0, self.width // LevelElement.DEFAULT_WIDTH):
+            for y in range(0, self.height // LevelElement.DEFAULT_HEIGHT, 1 + x % 2):
                 if(x < 2 and y < 2):
                     continue
                 if(random.random() <= BRICK_WALLS_CHANCE):
-                    self.elements.append(BrickWall.BrickWall(x * BaseWall.WIDTH, y * BaseWall.HEIGHT))
+                    self.elements.append(BrickWall.BrickWall(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT))

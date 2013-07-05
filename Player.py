@@ -1,4 +1,4 @@
-import SceneElement
+import LevelElement
 import pygame
 
 PLAYER_WIDTH = 45
@@ -12,10 +12,10 @@ def decrese(value):
         value += 1
     return value
 
-class Player(SceneElement.SceneElement):
+class Player(LevelElement.LevelElement):
     
     def __init__(self, x, y):
-        super().__init__(PLAYER_WIDTH, PLAYER_HEIGHT, x, y)
+        super().__init__(x, y, PLAYER_WIDTH, PLAYER_HEIGHT)
         self.sprite = pygame.image.load('player.png')
         self.current_level = None
         self.speed = PLAYER_SPEED

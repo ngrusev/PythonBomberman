@@ -7,11 +7,11 @@ pygame.init()
 FPS = 60
 fpsClock = pygame.time.Clock()
 
-DISPLAYSURF = pygame.display.set_mode((450, 350))
+DISPLAYSURF = pygame.display.set_mode((850, 650))
 pygame.display.set_caption('Bomberman')
 
 player = Player.Player(0, 0)
-level = BaseLevel.BaseLevel(450, 350, player)
+level = BaseLevel.BaseLevel(850, 650, player)
 direction_mask = 0
 
 direction_map = { K_LEFT : 1, K_UP : 2, K_RIGHT : 4, K_DOWN : 8 }

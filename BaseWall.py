@@ -1,11 +1,8 @@
-import SceneElement
+import LevelElement
 
-WIDTH = 50
-HEIGHT = 50
-
-class BaseWall(SceneElement.SceneElement):
+class BaseWall(LevelElement.LevelElement):
     def __init__(self, x, y):
-        super().__init__(WIDTH, HEIGHT, x, y)
+        super().__init__(x, y)
 
     def is_solid(self):
         return True
