@@ -5,6 +5,8 @@ import Bomb
 import random
 import Flame
 import Demon
+import BombBonus
+import RadiusBonus
 from Utilities import *
 
 BRICK_WALLS_CHANCE = 0.5
@@ -57,7 +59,7 @@ class BaseLevel:
                 if x < 2 and y < 2:
                     continue
                 if random.random() <= BRICK_WALLS_CHANCE:
-                    self.elements.append(BrickWall.BrickWall(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT))
+                    self.elements.append(BrickWall.BrickWall(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT, self))
                     self.occupied_cells.add((x, y))
 
     def spawn_demons(self):
@@ -88,7 +90,7 @@ class BaseLevel:
 
         for first in self.elements:
             for second in self.elements:
-                if not first.is_solid() and not second.is_solid() and intersecting(first, second):
+                if first != second and not first.is_solid() and not second.is_solid() and intersecting(first, second):
                     first.interact(second)
 
         i = 0
@@ -151,3 +153,8 @@ class BaseLevel:
                     newY >= 0 and newY < self.height):
                     self.elements.append(Flame.Flame(newX, newY))
 
+    def add_bomb_bonus(self, elem):
+        self.elements.append(BombBonus.BombBonus(elem.x, elem.y))
+
+    def add_radius_bonus(self, elem):
+        self.elements.append(RadiusBonus.RadiusBonus(elem.x, elem.y))
