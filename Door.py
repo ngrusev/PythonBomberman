@@ -3,20 +3,19 @@ import pygame
 import Player
 
 class Door(LevelElement.LevelElement):
-    def __init__(self, x, y, level):
+    def __init__(self, x, y, registerWin):
         super().__init__(x, y)
-        self.sprite = pygame.image.load('door.png')
-        self.level = level
+        self.__sprite = pygame.image.load('door.png')
+        self.__registerWin = registerWin
 
-    def get_sprite(self):
-        return self.sprite
+    def getSprite(self):
+        return self.__sprite
 
-    def is_solid(self):
+    def isSolid(self):
         return False
 
     def interact(self, element):
-        if (isinstance(element, Player.Player) and
-            self.level.getDemonCount() == 0):
-            self.level.win()
+        if (isinstance(element, Player.Player)):
+            self.__registerWin()
 
             

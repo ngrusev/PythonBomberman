@@ -12,9 +12,9 @@ pygame.display.set_caption('Bomberman')
 
 player = Player.Player()
 level = BaseLevel.BaseLevel(850, 650, player)
-direction_mask = 0
+directionMask = 0
 
-direction_map = { K_LEFT : 1, K_UP : 2, K_RIGHT : 4, K_DOWN : 8 }
+directionMap = { K_LEFT : 1, K_UP : 2, K_RIGHT : 4, K_DOWN : 8 }
 
 while True:
     DISPLAYSURF.fill((255, 255, 255))
@@ -23,21 +23,21 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == KEYDOWN and event.key in direction_map:
-            direction_mask |= direction_map[event.key]
-        elif event.type == KEYUP and event.key in direction_map:
-            direction_mask &= ~direction_map[event.key]
+        elif event.type == KEYDOWN and event.key in directionMap:
+            directionMask |= directionMap[event.key]
+        elif event.type == KEYUP and event.key in directionMap:
+            directionMask &= ~directionMap[event.key]
         elif event.type == KEYDOWN and event.key == K_SPACE:
-            player.drop_bomb()
+            player.dropBomb()
             
-    if direction_mask & direction_map[K_LEFT] != 0:
-        player.move_left()
-    if direction_mask & direction_map[K_RIGHT] != 0:
-        player.move_right()
-    if direction_mask & direction_map[K_UP] != 0:
-        player.move_up()
-    if direction_mask & direction_map[K_DOWN] != 0:
-        player.move_down()
+    if directionMask & directionMap[K_LEFT] != 0:
+        player.moveLeft()
+    if directionMask & directionMap[K_RIGHT] != 0:
+        player.moveRight()
+    if directionMask & directionMap[K_UP] != 0:
+        player.moveUp()
+    if directionMask & directionMap[K_DOWN] != 0:
+        player.moveDown()
 
     level.update()
 
@@ -46,8 +46,8 @@ while True:
             player = Player.Player()
         level = BaseLevel.BaseLevel(850, 650, player)
     
-    for elem in level.elements:
-        DISPLAYSURF.blit(elem.get_sprite(), elem.get_position())
+    for elem in level.getElements():
+        DISPLAYSURF.blit(elem.getSprite(), elem.getPosition())
 
     pygame.display.flip()
     

@@ -6,22 +6,24 @@ import random
 DEMON_SPEED = 2
 
 class Demon(LevelElement.LevelElement):
-    def __init__(self, x, y, level):
+    def __init__(self, x, y, isPositionValid, registerDeath):
         super().__init__(x, y)
-        self.sprite = pygame.image.load('demon.png')
-        self.speed = DEMON_SPEED
-        self.direction = None
-        self.destination = None
-        self.level = level
+        self.__sprite = pygame.image.load('demon.png')
+        self.__speed = DEMON_SPEED
+        self.__direction = None
+        self.__destination = None
+        self.__isPositionValid = isPositionValid
+        self.__registerDeath = registerDeath
 
-    def get_sprite(self):
-        return self.sprite
+    def getSprite(self):
+        return self.__sprite
 
     def destroy(self):
-        self.alive = False
-        self.level.demonDied()
+        if self._alive:
+            self._alive = False
+            self.__registerDeath()
 
-    def is_solid(self):
+    def isSolid(self):
         return False
 
     def interact(self, element):
@@ -29,37 +31,37 @@ class Demon(LevelElement.LevelElement):
             element.destroy()
 
     def update(self):
-        if self.direction == None:
+        if self.__direction == None:
             dirs = [(0, -1), (-1, 0), (0, 1), (1, 0)]
             while len(dirs) > 0:
                 i = random.randint(0, len(dirs) - 1)
-                if self.level.is_element_position_valid(self, self.x + dirs[i][0], self.y + dirs[i][1]):
-                    self.direction = (dirs[i][0] * self.speed, dirs[i][1] * self.speed)
-                    self.destination = (self.x + dirs[i][0] * LevelElement.DEFAULT_WIDTH, self.y + dirs[i][1] * LevelElement.DEFAULT_HEIGHT)
+                if self.__isPositionValid(self, self._x + dirs[i][0], self._y + dirs[i][1]):
+                    self.__direction = (dirs[i][0] * self.__speed, dirs[i][1] * self.__speed)
+                    self.__destination = (self._x + dirs[i][0] * LevelElement.DEFAULT_WIDTH, self._y + dirs[i][1] * LevelElement.DEFAULT_HEIGHT)
                     break
                 dirs.pop(i)
-            if self.direction == None:
+            if self.__direction == None:
                 return
         
-        dx = self.x - self.destination[0]
+        dx = self._x - self.__destination[0]
         dx = -dx if dx < 0 else dx
 
         if dx != 0:
-            if dx <= self.speed:
-                self.x = self.destination[0]
-                self.direction = None
-                self.destination = None
+            if dx <= self.__speed:
+                self._x = self.__destination[0]
+                self.__direction = None
+                self.__destination = None
             else:
-                self.x += self.direction[0]
+                self._x += self.__direction[0]
             return
 
-        dy = self.y - self.destination[1]
+        dy = self._y - self.__destination[1]
         dy = -dy if dy < 0 else dy
 
         if dy != 0:
-            if dy <= self.speed:
-                self.y = self.destination[1]
-                self.direction = None
-                self.destination = None
+            if dy <= self.__speed:
+                self._y = self.__destination[1]
+                self.__direction = None
+                self.__destination = None
             else:
-                self.y += self.direction[1]
+                self._y += self.__direction[1]

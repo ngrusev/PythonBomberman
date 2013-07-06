@@ -1,5 +1,6 @@
 import LevelElement
 import pygame
+from Utilities import *
 
 PLAYER_WIDTH = 45
 PLAYER_HEIGHT = 45
@@ -7,51 +8,67 @@ PLAYER_SPEED = 5
 PLAYER_BLAST_RADIUS = 2
 PLAYER_BOMBS = 1
 
-def modDecrease(value):
-    if value > 0:
-        value -= 1
-    elif value < 0:
-        value += 1
-    return value
-
 class Player(LevelElement.LevelElement):
     
     def __init__(self):
         super().__init__(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT)
-        self.sprite = pygame.image.load('player.png')
-        self.current_level = None
-        self.speed = PLAYER_SPEED
-        self.blast_radius = PLAYER_BLAST_RADIUS
-        self.bombs = PLAYER_BOMBS
+        self.__sprite = pygame.image.load('player.png')
+        self.__speed = PLAYER_SPEED
+        self.__radius = PLAYER_BLAST_RADIUS
+        self.__bombs = PLAYER_BOMBS
+        self.__isPosiotionValid = None
+        self.__registerBomb = None
         
-    def get_sprite(self):
-        return self.sprite
+    def getSprite(self):
+        return self.__sprite
 
-    def move_left(self):
-        self.__move(-self.speed, 0)
+    def moveLeft(self):
+        self.__move(-self.__speed, 0)
 
-    def move_up(self):
-        self.__move(0, -self.speed)
+    def moveUp(self):
+        self.__move(0, -self.__speed)
 
-    def move_right(self):
-        self.__move(self.speed, 0)
+    def moveRight(self):
+        self.__move(self.__speed, 0)
 
-    def move_down(self):
-        self.__move(0, self.speed)
+    def moveDown(self):
+        self.__move(0, self.__speed)
 
     def __move(self, dx, dy):
-        while (not self.current_level.is_element_position_valid(self, self.x + dx, self.y + dy) and
+        while (not self.__isPosiotionValid(self, self._x + dx, self._y + dy) and
                (dx != 0 or dy != 0)):
             dx = modDecrease(dx)
             dy = modDecrease(dy)
-        self.x += dx
-        self.y += dy
+        self._x += dx
+        self._y += dy
 
-    def drop_bomb(self):
-        self.current_level.add_bomb()
+    def dropBomb(self):
+        self.__registerBomb(self)
 
-    def is_solid(self):
+    def isSolid(self):
         return False
 
     def destroy(self):
-        self.alive = False
+        self._alive = False
+
+    def setPosition(self, x, y):
+        self._x = x
+        self._y = y
+
+    def increaseBombs(self):
+        self.__bombs += 1
+
+    def increaseRadius(self):
+        self.__radius += 1
+
+    def setIsPositionValid(self, value):
+        self.__isPosiotionValid = value
+
+    def setRegisterBomb(self, value):
+        self.__registerBomb = value
+
+    def getBombs(self):
+        return self.__bombs
+
+    def getRadius(self):
+        return self.__radius

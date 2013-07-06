@@ -5,19 +5,31 @@ FADE_SPEED = 3
 
 class LevelElement:
     def __init__(self, x, y, width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.alive = True
+        self._x = x
+        self._y = y
+        self._width = width
+        self._height = height
+        self._alive = True
 
-    def get_sprite(self):
+    def getSprite(self):
         raise NotImplementedError()
 
-    def get_position(self):
-        return (self.x, self.y)
+    def getPosition(self):
+        return (self._x, self._y)
 
-    def is_solid(self):
+    def getX(self):
+        return self._x
+
+    def getY(self):
+        return self._y
+
+    def getWidth(self):
+        return self._width
+
+    def getHeight(self):
+        return self._height
+
+    def isSolid(self):
         raise NotImplementedError()
 
     def update(self):
@@ -28,3 +40,6 @@ class LevelElement:
 
     def destroy(self):
         pass
+
+    def isAlive(self):
+        return self._alive

@@ -5,18 +5,18 @@ import Player
 class RadiusBonus(LevelElement.LevelElement):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.sprite = pygame.image.load('rbonus.png')
+        self.__sprite = pygame.image.load('rbonus.png')
         
-    def get_sprite(self):
-        return self.sprite
+    def getSprite(self):
+        return self.__sprite
 
-    def is_solid(self):
+    def isSolid(self):
         return False
 
     def interact(self, element):
         if isinstance(element, Player.Player):
-            element.blast_radius += 1
+            element.increaseRadius()
         self.destroy()
 
     def destroy(self):
-        self.alive = False
+        self._alive = False
