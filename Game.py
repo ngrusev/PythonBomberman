@@ -41,8 +41,9 @@ while True:
 
     level.update()
 
-    if not player.alive:
-        player = Player.Player()
+    if level.getStatus() != BaseLevel.LEVEL_IN_PROGRESS:
+        if level.getStatus() == BaseLevel.LEVEL_OVER:
+            player = Player.Player()
         level = BaseLevel.BaseLevel(850, 650, player)
     
     for elem in level.elements:

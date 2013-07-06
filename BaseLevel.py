@@ -7,10 +7,14 @@ import Flame
 import Demon
 import BombBonus
 import RadiusBonus
+import Door
 from Utilities import *
 
 BRICK_WALLS_CHANCE = 0.5
 DEMON_SPAWN_CHANCE = 0.1
+LEVEL_IN_PROGRESS = 0
+LEVEL_OVER = 1
+LEVEL_CLEAR = 2
 
 class BaseLevel:
     def __init__(self, width, height, player):
@@ -22,10 +26,13 @@ class BaseLevel:
         self.width = width
         self.bomb_count = 0
         self.elements = [player]
+        self.demonCount = 0
         self.occupied_cells = set()
         self.generate_steel_walls()
         self.generate_brick_walls()
+        self.createDoor()
         self.spawn_demons()
+        self.status = LEVEL_IN_PROGRESS
         
     def is_element_position_valid(self, element, x, y, solid_only = True):
         return (self.is_position_valid(element, x, y, solid_only) and
@@ -62,6 +69,13 @@ class BaseLevel:
                     self.elements.append(BrickWall.BrickWall(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT, self))
                     self.occupied_cells.add((x, y))
 
+    def createDoor(self):
+        brickWallsList = list(self.occupied_cells)
+        i = random.randint(0, len(brickWallsList) - 1)
+        doorX = brickWallsList[i][0] * LevelElement.DEFAULT_WIDTH
+        doorY = brickWallsList[i][1] * LevelElement.DEFAULT_HEIGHT
+        self.elements.insert(0, Door.Door(doorX, doorY, self))
+
     def spawn_demons(self):
         for x in range(0, self.width // LevelElement.DEFAULT_WIDTH):
             for y in range(0, self.height // LevelElement.DEFAULT_HEIGHT, 1 + x % 2):
@@ -70,6 +84,7 @@ class BaseLevel:
                 if random.random() <= DEMON_SPAWN_CHANCE:
                     self.elements.append(Demon.Demon(x * LevelElement.DEFAULT_WIDTH, y * LevelElement.DEFAULT_HEIGHT, self))
                     self.occupied_cells.add((x, y))
+                    self.demonCount += 1
                 
     def has_elements_on_top(self, element):
         for elem in self.elements:
@@ -80,6 +95,9 @@ class BaseLevel:
         return False
 
     def update(self):
+        if self.status != LEVEL_IN_PROGRESS:
+            return
+        
         i = 0
         while i < len(self.elements):
             self.elements[i].update()
@@ -99,6 +117,9 @@ class BaseLevel:
                 self.elements.pop(i)
             else:
                 i += 1
+
+        if not self.player.alive:
+            self.status = LEVEL_OVER
 
     def add_bomb(self):
         if self.bomb_count == self.player.bombs:
@@ -158,3 +179,15 @@ class BaseLevel:
 
     def add_radius_bonus(self, elem):
         self.elements.append(RadiusBonus.RadiusBonus(elem.x, elem.y))
+
+    def win(self):
+        self.status = LEVEL_CLEAR
+
+    def getDemonCount(self):
+        return self.demonCount
+
+    def demonDied(self):
+        self.demonCount -= 1
+
+    def getStatus(self):
+        return self.status

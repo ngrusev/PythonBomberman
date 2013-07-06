@@ -19,6 +19,7 @@ class Demon(LevelElement.LevelElement):
 
     def destroy(self):
         self.alive = False
+        self.level.demonDied()
 
     def is_solid(self):
         return False
